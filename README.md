@@ -1,26 +1,67 @@
 # Fabric Admin Panel
 
-Server-side Fabric mod for Minecraft 1.21.x with event logging and player statistics.
+Server-side Fabric mod for Minecraft 1.21.x with event logging, player statistics, and **Telegram notifications**.
 
 ## Features
 
-- **Event Logging** — tracks player joins, leaves, chat messages, deaths, and command usage
-- **Player Statistics** — playtime, blocks broken/placed, mobs killed, deaths, distance walked
-- **Leaderboards** — `/admin top <field>` to see top 10 players by any stat
-- **JSON Storage** — logs saved daily to `adminpanel/logs/`, stats to `adminpanel/stats.json`
+- **Telegram Notifications** — при входе/выходе игрока бот отправляет уведомление с ником, привилегией и статистикой
+- **Event Logging** — логирует join/leave/chat/death/command в JSON-файлы по дням
+- **Player Statistics** — playtime, блоки, мобы, смерти, дистанция, команды
+- **Leaderboards** — `/admin top <field>` для топ-10 по любому полю
+- **JSON Storage** — логи в `adminpanel/logs/`, статистика в `adminpanel/stats.json`
+
+## Telegram Setup
+
+1. Создай бота через [@BotFather](https://t.me/BotFather) → получи токен
+2. Напиши боту `/start`
+3. Открой `https://api.telegram.org/bot<ТВОЙ_ТОКЕН>/getUpdates` → найди `"chat":{"id":123456...}`
+4. Заполни `adminpanel/config.json`:
+
+```json
+{
+  "bot_token": "123456:ABC-DEF...",
+  "chat_id": 123456789,
+  "default_privilege": "Игрок"
+}
+```
+
+### Пример уведомления:
+
+```
+🟢 Игрок зашёл на сервер
+
+👤 Ник: Steve
+⭐ Привилегия: Игрок
+
+📊 Последняя сессия:
+  ⏱ Наиграл: 20 мин
+  ⛏ Блоков сломано: 142
+  🗡 Мобов убито: 3
+  🕐 Последний вход: 2026-07-08 18:30:00
+```
 
 ## Commands
 
 | Command | Description |
 |---------|-------------|
-| `/admin logs [count]` | Show recent events (default: 10) |
-| `/admin logs player <name>` | Events by specific player |
-| `/admin logs type <type>` | Events by type (join/leave/chat/death/command) |
-| `/admin stats` | Server-wide statistics overview |
-| `/admin stats <player>` | Individual player statistics |
-| `/admin top <field>` | Top 10 leaderboard (playtime/blocks_broken/mobs_killed/deaths/distance) |
+| `/admin logs [count]` | Последние события (по умолчанию 10) |
+| `/admin logs player <name>` | Лог по игроку |
+| `/admin logs type <type>` | Фильтр по типу (join/leave/chat/death/command) |
+| `/admin stats` | Общая статистика сервера |
+| `/admin stats <player>` | Статистика игрока |
+| `/admin top <field>` | Топ-10 (playtime/blocks_broken/mobs_killed/deaths/distance) |
 
-All commands require permission level 3 (operator).
+Все команды требуют permission level 3 (оператор).
+
+## Privilege Detection
+
+По умолчанию привилегия определяется по тегам в display name:
+- `[Admin]` / `[Админ]` → Админ
+- `[VIP]` / `[Вип]` → VIP
+- `[Mod]` / `[Модер]` → Модератор
+- Всё остальное → значение из `default_privilege` в конфиге
+
+Для интеграции с LuckPerms или другими плагинами прав — расширь метод `AdminPanelMod.getPlayerPrivilege()`.
 
 ## Requirements
 
@@ -39,9 +80,10 @@ Output: `build/libs/fabric-admin-panel-1.0.0.jar`
 
 ## Installation
 
-1. Place the `.jar` file in your server's `mods/` folder
-2. Ensure Fabric API is also installed
-3. Start the server — logs will appear in `adminpanel/logs/`
+1. Положи `.jar` в `mods/` сервера
+2. Установи Fabric API
+3. Заполни `adminpanel/config.json` (токен бота и chat_id)
+4. Запусти сервер
 
 ## License
 
