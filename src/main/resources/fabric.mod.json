@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "adminpanel",
+  "version": "${version}",
+  "name": "Admin Panel",
+  "description": "Server admin panel with event logging and player statistics for Fabric 1.21.x",
+  "authors": ["ta6ak-prog"],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/adminpanel/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "main": ["com.adminpanel.AdminPanelMod"]
+  },
+  "mixins": ["adminpanel.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
